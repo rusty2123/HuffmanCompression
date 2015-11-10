@@ -1,14 +1,28 @@
 //HUFF
 //By Russell and David
 
-
-
-#include<iostream>
-#include<fstream>
-#include<string>
-#include<sstream>
-#include<algorithm>
+#include <algorithm>
+#include <cmath>
+#include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#ifndef _WIN32
+// TODO: Move this to a header
+char* strcpy_s(char* dest, const char* src) {
+  return strcpy(dest, src);
+}
+
+char* strncpy_s(char* dest, const char* src, std::size_t num) {
+  return strncpy(dest, src, num);
+}
+
+char* strcat_s(char* dest, const char* src) {
+  return strcat(dest, src);
+}
+#endif
 
 using namespace std;
 
@@ -93,7 +107,7 @@ unsigned char encodeByte(char bitstring[])
     return byte;
 }
 
-void main()
+int main()
 {
     stringstream bitStringBuffer;
     stringstream finBuffer;
@@ -104,7 +118,6 @@ void main()
     char bitString[9] = "";
     unsigned char byteBuffer[8];
     char reversed[8] = "";
-    char remainder[16] = "";
     unsigned char byte;
     int glyphCount = 0;
     ifstream fin;
@@ -130,7 +143,7 @@ void main()
 
     for (int i = 0; i < 8; i++)
     {
-        byteBuffer[i] = NULL;
+        byteBuffer[i] = '\0';
     }
 
 
@@ -448,5 +461,5 @@ void main()
 
     fin.close();
     fout.close();
-
+    return 0;
 }
