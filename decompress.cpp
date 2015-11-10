@@ -84,9 +84,9 @@ int main()
 
 
     //reading in the header file part.
-    holdingBuffer.read((char*)&sizeOfName, 4);
+    holdingBuffer.read((char*)&sizeOfName, sizeof(int));
     holdingBuffer.get(originalName, sizeOfName + 1);
-    holdingBuffer.read((char*)&huffmanTableSize, 4);
+    holdingBuffer.read((char*)&huffmanTableSize, sizeof(int));
 
     ofstream fileOut;
     // get rid of the test calls eventually. 
@@ -101,9 +101,9 @@ int main()
     //reading in the huffmanTable
     for (int i = 0; i < huffmanTableSize; i++)
     {
-        holdingBuffer.read((char*)&mainArray[i].glyph, 4);
-        holdingBuffer.read((char*)&mainArray[i].leftPointer, 4);
-        holdingBuffer.read((char*)&mainArray[i].rightPointer, 4);
+        holdingBuffer.read((char*)&mainArray[i].glyph, sizeof(int));
+        holdingBuffer.read((char*)&mainArray[i].leftPointer, sizeof(int));
+        holdingBuffer.read((char*)&mainArray[i].rightPointer, sizeof(int));
 
     }
 
@@ -118,7 +118,7 @@ int main()
     while (!holdingBuffer.eof() && !end)
     {
 
-        holdingBuffer.read((char*)&byte, 1);
+        holdingBuffer.read((char*)&byte, sizeof byte);
 
         // cout << "The bit code for " << byte << " is "; test code, delete later
         for (int i = 0; i < 8 && !end; i++)
