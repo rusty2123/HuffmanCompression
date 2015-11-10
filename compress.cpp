@@ -405,9 +405,9 @@ int main()
 
     for (int i = 0; i < arrayLength; i++)
     {
-        fout.write((char*)&frequencies[i].g, 4);
-        fout.write((char*)&frequencies[i].lt, 4);
-        fout.write((char*)&frequencies[i].rt, 4);
+        fout.write((char*)&frequencies[i].g, sizeof(int));
+        fout.write((char*)&frequencies[i].lt, sizeof(int));
+        fout.write((char*)&frequencies[i].rt, sizeof(int));
     }
 
     for (int i = 0; i < entries - 1; i++) //do
