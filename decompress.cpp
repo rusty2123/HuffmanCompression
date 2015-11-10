@@ -33,21 +33,17 @@ struct Node
     int rightPointer;
 };
 
-void main()
+int main()
 {
     
     //const long long MAXSIZE = 10000000;// note- I think i am too small for the large file that he is planning on giving us. maybe find another way to do this? 
 
 
-    int tempLeftPointer;
-    int tempRightPointer;
-    char tempGlyph;
     string initialFileName;
     char originalName[64];
     int huffmanTableSize;
     int sizeOfName;
     Node mainArray[513];
-    Node *next, *previous, *main;
     int* messageArray = new int[10000000];
     unsigned char byte;
     const int BITMASK1 = 1;
@@ -163,4 +159,5 @@ void main()
 
     delete[] messageArray;
     fileOut.close();
+    return 0;
 }
