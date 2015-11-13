@@ -138,7 +138,7 @@ void getFrequencies(stringstream &buffer, node A[], int &count)
 	} while (!buffer.eof());
 }
 
-stringstream compressData(stringstream &input, char* inputFileName, char* outputFileName, ifstream &fin)
+stringstream compressData(stringstream &input, char* inputFileName)
 {
 	stringstream compressedData;
 
@@ -153,7 +153,6 @@ stringstream compressData(stringstream &input, char* inputFileName, char* output
 	char reversed[8] = "";
 	unsigned char byte;
 	int glyphCount = 0;
-	ofstream fout;
 	int fileLength;
 	string fileName;
 	int entries = 0;
@@ -345,25 +344,21 @@ stringstream compressData(stringstream &input, char* inputFileName, char* output
 	input.clear();
 	input.seekg(0);
 
-	fout.open(outputFileName, ios::out | ios::binary);
-	fout.clear();
-	fout.seekp(0);
-
 	//output header file size, filename, and table size
 	arrayLength = (2 * glyphCount) - 1;
-	fileLength = strlen(outputFileName);
+	fileLength = strlen(inputFileName);
 	fileName.assign(inputFileName);
 
 
-	fout.write((char*)&fileLength, sizeof fileLength);
-	fout << hex << fileName;
-	fout.write((char*)&arrayLength, sizeof arrayLength);
+	compressedData.write((char*)&fileLength, sizeof fileLength);
+	compressedData << hex << fileName;
+	compressedData.write((char*)&arrayLength, sizeof arrayLength);
 
 	for (int i = 0; i < arrayLength; i++)
 	{
-		fout.write((char*)&frequencies[i].g, sizeof(int));
-		fout.write((char*)&frequencies[i].lt, sizeof(int));
-		fout.write((char*)&frequencies[i].rt, sizeof(int));
+		compressedData.write((char*)&frequencies[i].g, sizeof(int));
+		compressedData.write((char*)&frequencies[i].lt, sizeof(int));
+		compressedData.write((char*)&frequencies[i].rt, sizeof(int));
 	}
 
 	for (int i = 0; i < entries - 1; i++) //do
@@ -412,14 +407,9 @@ stringstream compressData(stringstream &input, char* inputFileName, char* output
 		byte = encodeByte(reversed);
 		strcpy_s(reversed, "");
 
-		fout.write((char*)&byte, sizeof byte);
+		compressedData.write((char*)&byte, sizeof byte);
 	}
-	fin.close();
-	fin.clear();
-	fin.open(outputFileName, ios::in | ios::binary);
-	fin.seekg(0);
-	compressedData << fin.rdbuf();
-	fout.close();
+
 	return compressedData;
 }
 
@@ -442,7 +432,7 @@ int main()
 	finBuffer << fin.rdbuf();
 
 	//this is supposed to return a string stream of all of the compressed data. I didn't test the return value though.
-	compressData(finBuffer, fName, hufName, fin);
+	compressData(finBuffer, hufName);
 
 	return 0;
 }
