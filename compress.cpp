@@ -138,10 +138,11 @@ void getFrequencies(stringstream &buffer, node A[], int &count)
 	} while (!buffer.eof());
 }
 
-int main()
+stringstream compressData(stringstream &input, char* inputFileName, char* outputFileName, ifstream &fin)
 {
+	stringstream compressedData;
+
 	stringstream bitStringBuffer;
-	stringstream finBuffer;
 	node frequencies[513];
 	char symbol;
 	int m, h, f, p;
@@ -152,10 +153,7 @@ int main()
 	char reversed[8] = "";
 	unsigned char byte;
 	int glyphCount = 0;
-	ifstream fin;
 	ofstream fout;
-	char fName[32] = "";
-	char hufName[32] = "";
 	int fileLength;
 	string fileName;
 	int entries = 0;
@@ -176,18 +174,7 @@ int main()
 		byteBuffer[i] = '\0';
 	}
 
-	std::cout << "File to be compressed: ";
-	cin >> fName;
-
-	//START START START START START START START START START START START START START START START START START START START START START START START START START START START START START START START START 
-
-	createOutputFileName(fName, hufName);
-	
-	//read input file into a string stream
-	fin.open(fName, ios::in | ios::binary);
-	finBuffer << fin.rdbuf();
-
-	getFrequencies(finBuffer, frequencies, glyphCount);
+	getFrequencies(input, frequencies, glyphCount);
 
 	//insert eof indicator as 0A
 
@@ -355,17 +342,17 @@ int main()
 
 
 	//read through file again and output bitcodes
-	finBuffer.clear();
-	finBuffer.seekg(0);
+	input.clear();
+	input.seekg(0);
 
-	fout.open(hufName, ios::out | ios::binary);
+	fout.open(outputFileName, ios::out | ios::binary);
 	fout.clear();
 	fout.seekp(0);
 
 	//output header file size, filename, and table size
 	arrayLength = (2 * glyphCount) - 1;
-	fileLength = strlen(fName);
-	fileName.assign(fName);
+	fileLength = strlen(outputFileName);
+	fileName.assign(inputFileName);
 
 
 	fout.write((char*)&fileLength, sizeof fileLength);
@@ -381,7 +368,7 @@ int main()
 
 	for (int i = 0; i < entries - 1; i++) //do
 	{
-		finBuffer >> noskipws >> symbol;
+		input >> noskipws >> symbol;
 
 		for (int i = 0; i < 513; i++)
 		{
@@ -427,8 +414,35 @@ int main()
 
 		fout.write((char*)&byte, sizeof byte);
 	}
-
 	fin.close();
+	fin.clear();
+	fin.open(outputFileName, ios::in | ios::binary);
+	fin.seekg(0);
+	compressedData << fin.rdbuf();
 	fout.close();
+	return compressedData;
+}
+
+int main()
+{
+	char fName[32] = "";
+	char hufName[32] = "";
+	ifstream fin;
+	stringstream finBuffer;
+
+	std::cout << "File to be compressed: ";
+	cin >> fName;
+
+	//START START START START START START START START START START START START START START START START START START START START START START START START START START START START START START START START 
+
+	createOutputFileName(fName, hufName);
+
+	//read input file into a string stream
+	fin.open(fName, ios::in | ios::binary);
+	finBuffer << fin.rdbuf();
+
+	//this is supposed to return a string stream of all of the compressed data. I didn't test the return value though.
+	compressData(finBuffer, fName, hufName, fin);
+
 	return 0;
 }
